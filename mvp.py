@@ -4,7 +4,7 @@ from UberConnector import UberConnector
 from GeoConnector import GeoConnector
 
 UBER_SERVER_TOKEN = '7x_AZ2eWSn7nIekfylveYt3Hgb0juotM1JaPoawG'
-GEO_SERVER_TOKEN = 'TODO'
+GEO_SERVER_TOKEN = 'AIzaSyB1uLNtaLr9V8nGj0E9EfYa2-S2ilEac7I'
 START_POINT = (37.77, -122.41)
 END_POINT = (37.81, -122.41)
 NUM_NEIGHBOR_POINTS = 5
@@ -26,10 +26,12 @@ def main():
 	prices = set()
 	for pt in pts:
 		min_price, max_price = uber_connector.get_min_and_max(pt, END_POINT)
-		walking_time = geo_connector.get_walking_dist(START_POINT, pt)
+		walking_time, is_valid = geo_connector.get_walking_dist(START_POINT, pt)
+		if not is_valid:
+			continue
 		drive_time = geo_connector.get_driving_time(pt, END_POINT)
 		#TODO(arthurbrant) use cost function
-		prices.add((min_price, max_price))
+		prices.add((min_price, max_price, walking_time))
 
 	for price in prices:
 		print price
