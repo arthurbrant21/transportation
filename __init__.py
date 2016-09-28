@@ -1,1 +1,3 @@
-from NearbyPoints import NearbyPoints
+from NearPoints import NearPoints
+from UberConnector import UberConnector
+from GeoConnector import GeoConnector
