@@ -9,5 +9,5 @@ class GeoConnector:
 	def get_driving_time(self, start_pt, end_pt):
 		return 0
 
-	def get_walking_dist(self, start_pt, end_pt):
+	def get_walking_time(self, start_pt, end_pt):
 		return 0
