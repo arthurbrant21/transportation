@@ -10,28 +10,27 @@ class GeoConnector:
 	def __init__(self, service_key):
 		self.client = googlemaps.Client(service_key)
 
-	def get_dist(self, start_pt, end_pt, mode):
-		'''Get the distance from start_pt to end_pt. Mode must either be
-		WALKING_MODE or DRIVING_MODE. If traveling between the two points is not
-		possible, None is returned. Returns a 2 element tuple where the first
-		element is the travel duration in minutes and the 2nd is the distance in
-		miles.
+	def _get_dist_and_time(self, start_pt, end_pt, mode):
+		'''Get the distance from start_pt to end_pt. If traveling between the
+		two points is not possible, None is returned. Returns a 2 element tuple
+		where the first element is the travel duration in minutes and the 2nd
+		is the distance in miles.
 		'''
 		if mode != self.WALKING_MODE and mode != self.DRIVING_MODE:
 			print 'Invalid mode: ' + mode
-			return None
+			return None, None
 
 		distance_matrix = self.client.distance_matrix(start_pt, end_pt, mode)
 
 		# Check for error with API call
 		if distance_matrix['status'] != self.OK_STATUS:
-			return None
+			return None, None
 
 		result = distance_matrix['rows'][0]['elements'][0]
 
 		# Check if it is possible to walk to this coordinate
 		if result['status'] != self.OK_STATUS:
-			return None
+			return None, None
 
 		# 'value' is in seconds
 		travel_duration_mins = result['duration']['value'] / 60.0
@@ -41,3 +40,9 @@ class GeoConnector:
 		# Truncate to 2 decimal places
 		return (float('%.2f' % travel_duration_mins), 
 			    float('%.2f' % distance_miles))
+
+	def get_walking_time(self, start_pt, end_pt):
+		return self._get_dist_and_time(start_pt, end_pt, self.WALKING_MODE)
+
+	def get_driving_time(self, start_pt, end_pt):
+		return self._get_dist_and_time(start_pt, end_pt, self.DRIVING_MODE)
