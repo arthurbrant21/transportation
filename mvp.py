@@ -1,9 +1,9 @@
-import json
 from NearPoints import NearPoints
 from UberConnector import UberConnector
 from GeoConnector import GeoConnector
 from PickupDeets import PickupDeets
-from collections import namedtuple
+from HeatMap import HeatMap
+
 import threading
 import math
 
@@ -11,9 +11,9 @@ UBER_SERVER_TOKEN = '7x_AZ2eWSn7nIekfylveYt3Hgb0juotM1JaPoawG'
 GEO_SERVER_TOKEN = 'AIzaSyB1uLNtaLr9V8nGj0E9EfYa2-S2ilEac7I'
 START_POINT = (37.77, -122.41)
 END_POINT = (37.81, -122.41)
-NUM_NEIGHBOR_POINTS = 5
+NUM_NEIGHBOR_POINTS = 100
 RADIUS = .01 # in lat long units.
-NUM_THREADS = 5
+NUM_THREADS = 20
 
 
 def get_prices(uber_connector, loc_to_pickup_deets):
@@ -63,7 +63,7 @@ def main():
 	for pt in pts:		
 		(walking_time_mins,
 		 walking_distance_miles) = geo_connector.get_walking_time(START_POINT,
-		 												  pt)
+		 												  		  pt)
 		if not walking_time_mins:
 			continue
 		driving_time_mins, driving_distance_miles = geo_connector.get_driving_time(pt, 
@@ -83,6 +83,8 @@ def main():
 		location_to_cost[pt] = loc_to_pickup_deets[pt].get_cost()
 	location, cost = min(location_to_cost.items(), key=lambda x: x[1]) 
 	print location, cost
+
+	HeatMap(loc_to_pickup_deets).show()
 
 if __name__ == '__main__':
     main()
