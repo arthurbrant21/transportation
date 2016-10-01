@@ -11,9 +11,10 @@ UBER_SERVER_TOKEN = '7x_AZ2eWSn7nIekfylveYt3Hgb0juotM1JaPoawG'
 GEO_SERVER_TOKEN = 'AIzaSyB1uLNtaLr9V8nGj0E9EfYa2-S2ilEac7I'
 START_POINT = (37.77, -122.41)
 END_POINT = (37.81, -122.41)
-NUM_NEIGHBOR_POINTS = 100
-RADIUS = .01 # in lat long units.
-NUM_THREADS = 20
+
+NUM_NEIGHBOR_POINTS = 5
+RADIUS_MILES = 1
+NUM_THREADS = 5
 
 
 def get_prices(uber_connector, loc_to_pickup_deets):
@@ -36,7 +37,7 @@ def get_prices(uber_connector, loc_to_pickup_deets):
 	for thread in threads:
 		thread.join()
 
-def	get_walking_deets(geo_connector, loc_to_pickup_deets):
+def get_walking_deets(geo_connector, loc_to_pickup_deets):
 	# TODO(puyat)
 	return 0
 
@@ -52,7 +53,7 @@ def main():
 	near_points = NearPoints(START_POINT[0], START_POINT[1])
 	uber_connector = UberConnector(UBER_SERVER_TOKEN)
 	geo_connector = GeoConnector(GEO_SERVER_TOKEN)
-	pts = near_points.get_nearby_points(NUM_NEIGHBOR_POINTS, RADIUS)
+	pts = near_points.get_nearby_points(NUM_NEIGHBOR_POINTS, RADIUS_MILES)
 	loc_to_pickup_deets = {pt: PickupDeets() for pt in pts}
 	get_prices(uber_connector, loc_to_pickup_deets)
 	get_walking_deets(geo_connector, loc_to_pickup_deets)

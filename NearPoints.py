@@ -1,6 +1,8 @@
 import numpy as np
 
 class NearPoints:
+	MILES_PER_LAT_DEGREE = 68.6863716
+	MILES_PER_LONG_DEGREE_AT_EQUATOR = 69.1710411
 
 	def __init__(self, lat, lon):
 		"""Helper class to find nearby points.
@@ -57,4 +59,36 @@ class NearPoints:
 			theta = 2*np.pi*k/phi**2
 			nearby_points.append((r*np.cos(theta), r*np.sin(theta)))
 
-		return [(self.lat + lat * max_radius, self.lon + lon * max_radius) for lat,lon in nearby_points]
+		# Convert distance in miles to degrees difference (this conversion
+		# is different for latitude and longitude)
+		return [(self.lat + self._convert_vertical_dist_to_lat(dist_y * \
+			     max_radius), self.lon + \
+				 self._convert_horizontal_dist_to_longitude(self.lat, dist_x * max_radius)) \
+				 for dist_y,dist_x in nearby_points]
+
+	def _convert_vertical_dist_to_lat(self, vertical_dist_miles):
+		'''Converts a given distance (in miles) to its equivalent value
+		in latidude degrees.
+
+		See https://stackoverflow.com/questions/1253499/simple-calculations-for-working-with-lat-lon-km-distance/1253545#1253545
+
+		Args:
+		vertical_dist_miles: distance in miles going north/south
+		'''
+		return vertical_dist_miles / self.MILES_PER_LAT_DEGREE
+
+	def _convert_horizontal_dist_to_longitude(self, current_latitude, 
+											  horizontal_dist_miles):
+		'''Converts a given distance (in miles) to its equivalent value
+		in longitude degrees.
+
+		See https://stackoverflow.com/questions/1253499/simple-calculations-for-working-with-lat-lon-km-distance/1253545#1253545
+
+		Args:
+		current_latitude: current latitude degrees
+		horizontal_dist_miles: distance in miles going east/west
+		'''
+		return horizontal_dist_miles / self.MILES_PER_LONG_DEGREE_AT_EQUATOR \
+			* np.cos(current_latitude)
+
+
