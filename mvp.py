@@ -9,7 +9,7 @@ GEO_SERVER_TOKEN = 'AIzaSyB1uLNtaLr9V8nGj0E9EfYa2-S2ilEac7I'
 START_POINT = (37.77, -122.41)
 END_POINT = (37.81, -122.41)
 NUM_NEIGHBOR_POINTS = 5
-RADIUS = .01 # in lat long units.
+RADIUS_MILES = 1 # in miles
 
 PRICE_WEIGHT = 20
 WALKING_TIME_WEIGHT = 3
@@ -42,7 +42,8 @@ def main():
 	near_points = NearPoints(START_POINT[0], START_POINT[1])
 	uber_connector = UberConnector(UBER_SERVER_TOKEN)
 	geo_connector = GeoConnector(GEO_SERVER_TOKEN)
-	pts = near_points.get_nearby_points(NUM_NEIGHBOR_POINTS, RADIUS)
+	pts = near_points.get_nearby_points(NUM_NEIGHBOR_POINTS, RADIUS_MILES)
+	print pts
 	location_to_cost = {}
 	for pt in pts:
 		min_price, max_price = uber_connector.get_min_and_max(pt, END_POINT)
@@ -55,6 +56,8 @@ def main():
 																		 END_POINT)
 		if not driving_time_mins:
 			continue
+
+		print walking_time_mins, walking_distance_miles
 
 		cost = cost_function(min_price,
 							 max_price,
