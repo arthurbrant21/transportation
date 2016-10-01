@@ -10,24 +10,32 @@ class GeoConnector:
 	def __init__(self, service_key):
 		self.client = googlemaps.Client(service_key)
 
-	def _get_dist_and_time(self, start_pt, end_pt, mode):
-		'''Get the distance from start_pt to end_pt. If traveling between the
-		two points is not possible, None is returned. Returns a 2 element tuple
-		where the first element is the travel duration in minutes and the 2nd
-		is the distance in miles.
-		'''
-		if mode != self.WALKING_MODE and mode != self.DRIVING_MODE:
-			print 'Invalid mode: ' + mode
-			return None, None
-
-		distance_matrix = self.client.distance_matrix(start_pt, end_pt, mode)
+	def get_walking_deets(self, start_pt, end_pts):
+		distance_matrix = self.client.distance_matrix(start_pt, end_pts, self.WALKING_MODE)
 
 		# Check for error with API call
 		if distance_matrix['status'] != self.OK_STATUS:
 			return None, None
 
-		result = distance_matrix['rows'][0]['elements'][0]
+		pt_to_deets = {}
+		for idx, result in enumerate(distance_matrix['rows'][0]['elements']):
+			pt_to_deets[end_pts[idx]] = self._get_deets_from_result(result)
+		return pt_to_deets
 
+	def get_driving_deets(self, start_pts, end_pt):
+		distance_matrix = self.client.distance_matrix(start_pts, end_pt, self.DRIVING_MODE)
+
+		# Check for error with API call
+		if distance_matrix['status'] != self.OK_STATUS:
+			return None, None
+
+		pt_to_deets = {}
+		for idx, row in enumerate(distance_matrix['rows']):
+			pt_to_deets[start_pts[idx]] = \
+				self._get_deets_from_result(row['elements'][0])
+		return pt_to_deets
+
+	def _get_deets_from_result(self, result):
 		# Check if it is possible to walk to this coordinate
 		if result['status'] != self.OK_STATUS:
 			return None, None
@@ -38,11 +46,5 @@ class GeoConnector:
 		distance_miles = distance_meters / 1000.0 * self.MILES_TO_KM_RATIO
 
 		# Truncate to 2 decimal places
-		return (float('%.2f' % travel_duration_mins), 
-			    float('%.2f' % distance_miles))
-
-	def get_walking_time(self, start_pt, end_pt):
-		return self._get_dist_and_time(start_pt, end_pt, self.WALKING_MODE)
-
-	def get_driving_time(self, start_pt, end_pt):
-		return self._get_dist_and_time(start_pt, end_pt, self.DRIVING_MODE)
+		return {'mins': float('%.2f' % travel_duration_mins), \
+				'miles': float('%.2f' % distance_miles)}

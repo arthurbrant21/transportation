@@ -37,12 +37,19 @@ def get_prices(uber_connector, loc_to_pickup_deets):
 		thread.join()
 
 def get_walking_deets(geo_connector, loc_to_pickup_deets):
-	# TODO(puyat)
-	return 0
+	loc_to_walking_deets = \
+		geo_connector.get_walking_deets(START_POINT, loc_to_pickup_deets.keys())
+	for pt, walking_deets in loc_to_walking_deets.iteritems():
+		loc_to_pickup_deets[pt].walking_time_mins = walking_deets['mins']
+		loc_to_pickup_deets[pt].walking_distance_miles = walking_deets['miles']
 
 def	get_driving_deets(geo_connector, loc_to_pickup_deets):
-	# TODO(puyat)
-	return 0
+	loc_to_driving_deets = \
+		geo_connector.get_driving_deets(loc_to_pickup_deets.keys(), END_POINT)
+
+	for pt, driving_deets in loc_to_driving_deets.iteritems():
+		loc_to_pickup_deets[pt].driving_time_mins = driving_deets['mins']
+		loc_to_pickup_deets[pt].driving_distance_miles = driving_deets['miles']
 
 def	filter_non_complete_deets(loc_to_pickup_deets):
 	return {pt: deets for pt, deets in loc_to_pickup_deets.iteritems() if deets.is_valid()}
@@ -57,25 +64,6 @@ def main():
 	get_prices(uber_connector, loc_to_pickup_deets)
 	get_walking_deets(geo_connector, loc_to_pickup_deets)
 	get_driving_deets(geo_connector, loc_to_pickup_deets)
-
-	# TODO(marcelpuyat) add batched google maps here. Your change should eliminate for loop.
-	### This block should be deleted with puyat's CL.
-	for pt in pts:		
-		(walking_time_mins,
-		 walking_distance_miles) = geo_connector.get_walking_time(START_POINT,
-		 												  pt)
-		if not walking_time_mins:
-			continue
-		driving_time_mins, driving_distance_miles = geo_connector.get_driving_time(pt, 
-																		 END_POINT)
-		if not driving_time_mins:
-			continue
-
-		loc_to_pickup_deets[pt].walking_time_mins = walking_time_mins
-		loc_to_pickup_deets[pt].walking_distance_miles = walking_distance_miles
-		loc_to_pickup_deets[pt].driving_time_mins = driving_time_mins
-		loc_to_pickup_deets[pt].driving_distance_miles = driving_distance_miles
-    ### This block should be deleted with puyat's CL.
 
 	loc_to_pickup_deets = filter_non_complete_deets(loc_to_pickup_deets)
 	location_to_cost = {}
