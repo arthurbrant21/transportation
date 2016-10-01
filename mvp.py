@@ -26,15 +26,22 @@ def main():
 	prices = set()
 	for pt in pts:
 		min_price, max_price = uber_connector.get_min_and_max(pt, END_POINT)
-		walking_time_mins, walking_distance_miles = geo_connector.get_dist(START_POINT, pt, GeoConnector.WALKING_MODE)
+		(walking_time_mins,
+		 walking_distance_miles) = geo_connector.get_dist(START_POINT,
+		 												  pt,
+		 												  GeoConnector.WALKING_MODE)
 		if walking_time_mins is None:
 			continue
-		drive_time_mins, driving_distance_miles = geo_connector.get_dist(pt, END_POINT, GeoConnector.DRIVING_MODE)
+		drive_time_mins, driving_distance_miles = geo_connector.get_dist(pt, 
+																		 END_POINT,
+																		 GeoConnector.DRIVING_MODE)
 		if drive_time_mins is None:
 			continue
 
 		#TODO(arthurbrant) use cost function
-		prices.add((min_price, max_price, walking_time_mins, walking_distance_miles, drive_time_mins, driving_distance_miles))
+		prices.add((min_price, max_price, walking_time_mins,
+					walking_distance_miles, drive_time_mins, 
+					driving_distance_miles))
 
 	for price in prices:
 		print price
