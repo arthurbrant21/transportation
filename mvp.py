@@ -11,7 +11,7 @@ END_POINT = (37.81, -122.41)
 NUM_NEIGHBOR_POINTS = 5
 RADIUS = .01 # in lat long units.
 
-PRICE_WEIGHT = -20
+PRICE_WEIGHT = 20
 WALKING_TIME_WEIGHT = 3
 DRIVING_TIME_WEIGHT = 1
 
@@ -64,8 +64,8 @@ def main():
 							 driving_distance_miles)
 		location_to_cost[pt] = cost
 
-	cost, location = min(location_to_cost.items(), key=lambda x: x[1]) 
-	print cost,location
+	location, cost = min(location_to_cost.items(), key=lambda x: x[1]) 
+	print location, cost
 
 if __name__ == '__main__':
     main()
