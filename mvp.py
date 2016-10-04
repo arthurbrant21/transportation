@@ -46,14 +46,12 @@ def get_walking_deets(geo_connector, loc_to_pickup_deets):
 def	get_driving_deets(geo_connector, loc_to_pickup_deets):
 	loc_to_driving_deets = \
 		geo_connector.get_driving_deets(loc_to_pickup_deets.keys(), END_POINT)
-
 	for pt, driving_deets in loc_to_driving_deets.iteritems():
 		loc_to_pickup_deets[pt].driving_time_mins = driving_deets['mins']
 		loc_to_pickup_deets[pt].driving_distance_miles = driving_deets['miles']
 
 def	filter_non_complete_deets(loc_to_pickup_deets):
 	return {pt: deets for pt, deets in loc_to_pickup_deets.iteritems() if deets.is_valid()}
-
 
 def main():
 	near_points = NearPoints(START_POINT[0], START_POINT[1])
