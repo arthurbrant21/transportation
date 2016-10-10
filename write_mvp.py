@@ -32,7 +32,7 @@ def get_bucket_minute(minute, second):
 
 def main():
 	pacific = timezone(TIMEZONE)
-	now = pacific.localize(datetime.datetime.now())
+	now = datetime.datetime.now(pacific)
 	if now.hour < START_HOUR or now.hour > END_HOUR:
 		sys.exit(0)
 	minute = get_bucket_minute(now.minute, now.second)
