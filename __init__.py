@@ -4,3 +4,4 @@ from GeoConnector import GeoConnector
 from PickupDeets import PickupDeets
 from HeatMap import HeatMap
 from Mailer import Mailer
+from HistoryVisualizer import HistoryVisualizer
