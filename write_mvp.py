@@ -43,7 +43,8 @@ def main():
 	        'latend': END_POINT[0],
 	        'longend': END_POINT[1]}
 
-	query = "INSERT INTO %(table)s VALUES (%(latstart)s, %(longstart)s, \'%(year)s:%(month)s:%(day)s %(hour)s:%(minute)s:%(second)s\', %(minprice)s, %(maxprice)s, %(latend)s, %(longend)s);" % data
+	query = """INSERT INTO %(table)s VALUES (%(latstart)s, %(longstart)s, \'%(year)s:%(month)s:%(day)s
+		%(hour)s:%(minute)s:%(second)s\', %(minprice)s, %(maxprice)s, %(latend)s, %(longend)s);""" % data
 	db.query(query)
 
 if __name__ == '__main__':
