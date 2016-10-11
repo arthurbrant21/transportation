@@ -1,10 +1,8 @@
-FILEPATH = "/tmp/a.csv"
+from HistoryVisualizer import HistoryVisualizer
 
 
 def main():
-	with open(FILEPATH, 'r') as f:
-		for line in f:
-			print line.split(',')
+	HistoryVisualizer().visualize("", "")
 
 
 if __name__ == '__main__':
