@@ -8,8 +8,6 @@ UBER_SERVER_TOKEN = '7x_AZ2eWSn7nIekfylveYt3Hgb0juotM1JaPoawG'
 START_POINT = (37.403675, -122.057824)
 END_POINT = (37.421264, -122.211321)
 TIMEZONE = 'US/Pacific'
-START_HOUR = 6
-END_HOUR = 9
 
 DB_HOST = 'uberpricehistory.c2pcqvbwz3cq.us-west-2.rds.amazonaws.com'
 DB_PORT = 3306
@@ -22,8 +20,6 @@ DB_PRICES_TABLE = 'prices_history'
 def main():
 	pacific = timezone(TIMEZONE)
 	now = datetime.datetime.now(pacific)
-	if now.hour < START_HOUR or now.hour > END_HOUR:
-		sys.exit(0)
 
 	uber_connector = UberConnector(UBER_SERVER_TOKEN)
 	min_price, max_price = uber_connector.get_min_and_max(START_POINT, END_POINT, 'POOL')
